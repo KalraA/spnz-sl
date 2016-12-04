@@ -13,4 +13,4 @@ Created by Wilson Hsu and Agastya Kalra.
 
 #### Usage:
 
-Go to checkout experiments/real_data.py
+Go to experiments/real_data.py
