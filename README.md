@@ -13,4 +13,19 @@ Created by Wilson Hsu and Agastya Kalra.
 
 #### Usage:
 
-Go to experiments/real_data.py
+To run any of the experiments in the dataset first create a folder in the library directory called SPN-Z-SL/data/dataset_name/.
+
+Then create 10 files of the dataset as follows:
+
+dataset_name.1.data ... dataset_name.10.data.
+
+then add ~/path/to/SPN-Z-SL/ to your PYTHONPATH.
+
+finally in experiments/read_data.py, add the line to run an experiment. The file explains the parameters.
+
+then in the libraries main directory type:
+
+python3 experiment/real_data.py
+
+
+
