@@ -3,8 +3,9 @@ from kfold import run
 T = True
 F = False
 N = "normal"
-
-run("real", F, 'power',          4,   2,   500000,  1, 32, T, T, 0, N)
+arr = [2, 3, 4]
+for a in arr:
+	run("real", F, 'power',          4,   2,   100000,  100000, 0.1, T, T, a, N)
 #run("real", F, 'banknote',    4,   2,   1,  10, 0.1, T, T, 0, N)
 #run("real", F, 'sensorless', 48,   2, 256, 256, 0.1, T, T, 4, N)
 #run("real", F, 'flowdata',    3,   2, 256, 256, 0.1, T, T, 0, N)

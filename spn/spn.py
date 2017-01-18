@@ -63,7 +63,7 @@ class SPN:
 
 	def update(self, obs, upd):
 		if upd:
-			self.params.corrthresh = 0.6
+#			self.params.corrthresh = 20.2
 			i = 100
 			a = 0
 			b = a + i
@@ -74,7 +74,7 @@ class SPN:
 				b = min(len(obs), b+i)
 				print(a)
 			return
-		self.params.corrthresh = 10;
+#		self.params.corrthresh = 0.2;
 		if obs.ndim == 1:
 			obs = obs.reshape(1, len(obs))
 		if self.params.batchsize > 0:

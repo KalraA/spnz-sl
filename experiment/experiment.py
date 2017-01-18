@@ -16,7 +16,7 @@ class Experiment:
                 for filename in self.trainfiles:
                         print(filename)
                         i += 1
-                        if i == 1:
+                        if i == -1:
                                 self.train_one_file(filename, True)
                         else:
                                 self.train_one_file(filename, False)
@@ -25,7 +25,7 @@ class Experiment:
                 dtype = int if self.model.params.binary else float
                 obs = np.loadtxt(filename, delimiter=",", dtype=dtype)
                 logprob = 0
-                n = 100000
+                n = 10000
                 for i in range((len(obs)-1)//n + 1):
                         a = i*n
                         b = min(len(obs), a + n)

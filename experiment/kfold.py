@@ -33,7 +33,7 @@ def gen_random_node(scope, nodetype):
 			return p
 	else:
 		s = SumNode(0, scope)
-		nc = np.random.randint(20,25)
+		nc = np.random.randint(2,3)
 		children = [None]*nc
 		for i in range(nc):
 			children[i] = gen_random_node(scope, 'P')
@@ -43,6 +43,7 @@ def gen_random_node(scope, nodetype):
 def gen_random_spn(numvar, params):
 	model = SPN(numvar, 2, params)
 #	model.root = RootNode(gen_random_node(np.arange(numvar), 'S'))
+	print(count_nodes(model))
 	return model
 
 
