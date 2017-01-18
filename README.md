@@ -28,4 +28,4 @@ then in the libraries main directory type:
 python3 experiment/real_data.py
 
 
-
+REAL_NVP Experiments: https://github.com/KalraA/real-nvp/
