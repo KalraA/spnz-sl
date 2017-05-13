@@ -5,8 +5,20 @@ from .sum_node import SumNode
 from .normal_leaf_node import NormalLeafNode
 from .multi_normal_leaf_node import MultiNormalLeafNode
 from .multi_normal_stat import MultiNormalStat
+from multiprocessing import Pool
+mult = True
+#POOL = False
+def func(tups):
+	"""
+	Docs
+	"""
+	# def func2(c):
+	c, obs = tups
+	return c.evaluate(obs, mpe=False)
+	# return func2
 
 class ProductNode(Node):
+
 	def __init__(self, n, scope, leaftype, src=None):
 		super(ProductNode, self).__init__(n, scope)
 		if leaftype == "normal":
@@ -16,7 +28,7 @@ class ProductNode(Node):
 			self.dtype = float
 		else:
 			raise ValueError("Leaf type {0} not supported.".format(leaftype))
-		
+		self.value = 0
 		m = len(scope)
 		if src is None:
 			self.stat = self.Stat.create(m)
@@ -38,11 +50,20 @@ class ProductNode(Node):
 		obs[self.scope] = self.stat.distill()
 		return obs
 
-	def evaluate(self, obs):
+	def evaluate(self, obs, mpe=False):
 		value = 0.0
-		for child in self.children:
-			value += child.evaluate(obs)
-		return value
+		global mult
+		if mult:
+
+			# global pool
+			values = Pool(2).map(func, zip(self.children, [obs]*len(self.children)))
+			self.value = sum(values)
+			mult = False
+		else:
+			for child in self.children:
+				value += child.evaluate(obs, mpe=mpe)
+			self.value = value
+		return self.value
 
 	def update(self, obs, params):
 		self.stat.update(obs[:,self.scope], self.n)
@@ -99,7 +120,6 @@ class ProductNode(Node):
 	def merge_into_sumnode(self, ci, cj, scope, obs, params):
 		p1 = ProductNode(self.n, scope, params.leaftype, self)
 		p1.add_children(ci, cj)
-
 		p2 = ProductNode(0, scope, params.leaftype)
 		p2.stat = self.stat.extract_from_obs(self.map_scope(scope), obs[:,scope])
 		children = self.Leaf.create_from_stat(p2.n, p2.scope, p2.stat)
@@ -135,4 +155,18 @@ class ProductNode(Node):
 			self.merge_into_mvleaf(ci, cj, scope, obs, params)
 		else:
 			self.merge_into_sumnode(ci, cj, scope, obs, params)
+
+	def check_valid(self):
+		for c in self.children:
+			assert c.check_valid()
+		return len([x for x in self.i2c if x is None]) == 0
+
+	def hard_em(self, data, inds):
+		[c.hard_em(data, inds) for c in self.children]
+		self.n += len(data)
+
+	def normalize_nodes(self):
+		for c in self.children:
+			c.normalize_nodes()
+
 

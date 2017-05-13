@@ -1,5 +1,5 @@
 import copy
-
+import numpy as np
 from .node import Node
 
 class RootNode(Node):
@@ -8,8 +8,8 @@ class RootNode(Node):
 		self.children.append(node)
 		node.parent = self
 
-	def evaluate(self, obs):
-		return self.children[0].evaluate(obs)
+	def evaluate(self, obs, mpe=False):
+		return self.children[0].evaluate(obs, mpe=mpe)
 
 	def update(self, obs, params):
 		self.children[0].update(obs, params)
@@ -28,3 +28,12 @@ class RootNode(Node):
 		self.children.remove(child)
 		child.parent = None
 
+	def check_valid(self):
+		assert self.children[0].check_valid()
+
+	def hard_em(self, data):
+		inds = np.arange(len(data))
+		self.children[0].hard_em(data, inds)
+
+	def normalize_nodes(self):
+		self.children[0].normalize_nodes()

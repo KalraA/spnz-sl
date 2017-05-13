@@ -25,8 +25,12 @@ class NormalLeafNode(Node):
 		obs[self.index] = self.mean
 		return obs
 
-	def evaluate(self, obs):
-		return self.logpdf(obs[:,self.index])
+	def evaluate(self, obs, mpe=False):
+		self.value = self.logpdf(obs[:,self.index])
+		return self.value
+
+	def hard_em(self, data, inds):
+		self.update(data, None)
 
 	def update(self, obs, params):
 		n = max(self.n, 1)
@@ -48,3 +52,8 @@ class NormalLeafNode(Node):
 			nodes[i] = NormalLeafNode(n, v, stat.mean[i], stat.cov[i,i])
 		return nodes
 
+	def check_valid(self):
+		return True
+
+	def normalize_nodes(self):
+		self.n = 0

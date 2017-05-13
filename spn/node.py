@@ -5,6 +5,7 @@ class Node:
 		self.scope = scope.copy()
 		self.children = []
 		self.parent = None
+		self.value = 0
 
 	def add_children(self, *children):
 		for child in children:

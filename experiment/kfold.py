@@ -6,7 +6,7 @@ import numpy as np
 
 from spn.spn import *
 from util.util import *
-from experiment import Experiment
+from experiment import Experiment, ILSPN_Experiment
 
 
 from spn.sum_node import SumNode
@@ -52,8 +52,8 @@ DATADIR = 'data'
 OUTDIR = 'output'
 
 def make_kfold_filenames(vartype, name, k):
-	filenames = [os.path.join(DATADIR, vartype, name, "{0}.{1}.data".format(name, i+1))
-	             for i in range(k)]
+	filenames = [os.path.join(DATADIR, vartype, name, "{0}.{1}.data".format(name, i))
+	             for i in ['ts', 'test']]
 	return filenames
 
 def make_train_test_filenames(vartype, name):
@@ -133,4 +133,47 @@ def run(vartype, traintest, name, numvar, numcomp, batchsize, mergebatch, corrth
 		with open(picklepath, 'wb') as g:
 			pickle.dump(models, g)
 
+
+def run_ilspn(vartype, traintest, folder, name, numvar, numcomp, batchsize, leaftype):
+	outfile = "ilspn_{0}_{1}_{2}_{3}_{4}_{5}".format(name, numcomp, batchsize)
+	resultpath = "{0}.txt".format(outfile)
+	picklepath = "{0}.pkl".format(outfile)
+	files = os.listdir(folder)
+	results, times, numnodes, numparams = 0, 0, 0, 0
+	for i in range(10):
+		print('******{0}*******'.format(name))
+		trainfiles = files[:i] + files[i+1:]
+		testfiles = [files[i]]
+		print (trainfiles, testfiles)
+		experiment = ILSPN_Experiment(trainfiles, testfiles)
+		start = time.time()
+		result = experiment.run()
+		end = time.time() - start
+		spn = experiment.model
+		numnode = count_nodes(model)
+		numparam = count_params(model)		
+		results += result
+		times += end
+		numparams += numparam
+		numnodes += numnode
+		print('Loglhd: {0:.3f}'.format(result))
+		print('Time: {0:.3f}'.format(end))
+		print('Number of nodes: {0}'.format(numnode))
+		print('Number of parameters: {0}'.format(numparam))
+	numnodes /= 10.
+	times /= 10.
+	results /= 10.
+	numparams /= 10.
+	print('Loglhd: {0:.3f}'.format(results))
+	print('Time: {0:.3f}'.format(times))
+	print('Number of nodes: {0}'.format(numnodes))
+	print('Number of parameters: {0}'.format(numparams))
+	with open(resultpath, 'w') as g:
+		g.write('Loglhd: {0:.3f}\n'.format(results))
+		g.write('Time: {0:.3f}\n'.format(times))
+		g.write('Number of nodes: {0}\n'.format(numnodes))
+		g.write('Number of parameters: {0}\n'.format(numparams))
+		g.close()
+
+	print('******{0}*******'.format(name))
 

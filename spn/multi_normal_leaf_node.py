@@ -28,11 +28,20 @@ class MultiNormalLeafNode(Node):
 		obs[self.scope] = self.stat.rep()
 		return obs
 
-	def evaluate(self, obs):
+	def evaluate(self, obs, mpe=False):
 		x = obs[:,self.scope]
-		return self.stat.evaluate(x)
+		self.value = self.stat.evaluate(x)
+		return self.value
+
+	def hard_em(self, data, inds=None):
+		self.update(data, None)
 
 	def update(self, obs, params):
 		self.stat.update(obs[:,self.scope], self.n)
 		self.n += len(obs)
 
+	def check_valid(self):
+		return True
+
+	def normalize_nodes(self):
+		self.n = 0

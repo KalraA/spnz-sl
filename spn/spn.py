@@ -81,11 +81,16 @@ class SPN:
 			for i in range(0, len(obs), self.params.batchsize):
 				print(i)
 				self.root.update(obs[i:i+self.params.batchsize], self.params)
+				# if i % 1000 == 0:
+				# 	self.normalize_nodes()
 		else:
 			self.root.update(obs, self.params)
 
 	def display(self):
 		self.root.display()
+
+	def normalize_nodes(self):
+		self.root.normalize_nodes()
 
 def init_root(scope, nc, leaftype):
 	node = SumNode(0, scope)
